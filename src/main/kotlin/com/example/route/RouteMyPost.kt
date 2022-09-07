@@ -166,12 +166,15 @@ fun Application.routeMyPost() {
             }
 
             put("/update/read") {
-                val myPostId = call.request.queryParameters["mypost_id"].toString()
+                val myPostId = call.request.queryParameters["my_post_id"].toString()
                 val myPostIdInt = myPostId.toInt()
+
+                val isReadStr = call.request.queryParameters["is_read"].toString()
+                val isReadInt = isReadStr.toInt()
 
                 val noOfRowsAffected = db.update(EntityMyPost)
                 {
-                    set(it.isRead, 1)
+                    set(it.isRead, isReadInt)
                     where {
                         it.my_post_id eq myPostIdInt
                     }
@@ -194,7 +197,7 @@ fun Application.routeMyPost() {
             }
 
             put("/update/download") {
-                val myPostId = call.request.queryParameters["mypost_id"].toString()
+                val myPostId = call.request.queryParameters["my_post_id"].toString()
                 val myPostIdInt = myPostId.toInt()
 
                 val isDownloadStr = call.request.queryParameters["is_download"].toString()
@@ -225,7 +228,7 @@ fun Application.routeMyPost() {
             }
 
             put("/update/rate") {
-                val myPostId = call.request.queryParameters["mypost_id"].toString()
+                val myPostId = call.request.queryParameters["my_post_id"].toString()
                 val myPostIdInt = myPostId.toInt()
 
                 val rateStr = call.request.queryParameters["rate"].toString()

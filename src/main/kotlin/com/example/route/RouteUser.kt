@@ -135,22 +135,20 @@ fun Application.routeUser() {
 
             put("/update")
             {
-                val userIdStr = call.request.queryParameters["user_id"].toString()
-//            val userIdInt = userIdStr?.toInt() ?: -1
-                val userReq: User = call.receive()
+                val user: User = call.receive()
 
                 val noOfRowsAffected = db.update(EntityUser)
                 {
-                    set(it.user_name, userReq.user_name)
-                    set(it.user_image, userReq.user_image)
-                    set(it.email, userReq.email)
-                    set(it.birthday, userReq.birthday)
-                    set(it.phone_number, userReq.phone_number)
-                    set(it.address, userReq.address)
-                    set(it.last_active, userReq.last_active)
-                    set(it.account_type_id, userReq.account_type_id)
+                    set(it.user_name, user.user_name)
+                    set(it.user_image, user.user_image)
+                    set(it.email, user.email)
+                    set(it.birthday, user.birthday)
+                    set(it.phone_number, user.phone_number)
+                    set(it.address, user.address)
+                    set(it.last_active, user.last_active)
+                    set(it.account_type_id, user.account_type_id)
                     where {
-                        it.user_id eq userIdStr
+                        it.user_id eq user.user_id
                     }
                 }
 

@@ -230,8 +230,40 @@ fun Application.routeMyVideo() {
 
             }
 
+            put("/update/view") {
+                val myVideoId = call.request.queryParameters["my_video_id"].toString()
+                val myVideoIdInt = myVideoId.toInt()
+
+                val isViewStr = call.request.queryParameters["is_view"].toString()
+                val isViewInt = isViewStr.toInt()
+
+                val noOfRowsAffected = db.update(EntityMyVideo)
+                {
+
+                    set(it.isView, isViewInt)
+                    where {
+                        it.my_video_id eq myVideoIdInt
+                    }
+                }
+
+                if (noOfRowsAffected > 0) {
+                    //success
+                    call.respond(
+                        HttpStatusCode.OK,
+                        GenericResponse(isSuccess = true, data = "$noOfRowsAffected rows are affected")
+                    )
+                } else {
+                    //fail
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        GenericResponse(isSuccess = false, data = "Error to update the my video")
+                    )
+                }
+
+            }
+
             put("/update/like") {
-                val myVideoId = call.request.queryParameters["myvideo_id"].toString()
+                val myVideoId = call.request.queryParameters["my_video_id"].toString()
                 val myVideoIdInt = myVideoId.toInt()
 
                 val isLikeStr = call.request.queryParameters["is_like"].toString()
@@ -263,7 +295,7 @@ fun Application.routeMyVideo() {
             }
 
             put("/update/later") {
-                val myVideoId = call.request.queryParameters["myvideo_id"].toString()
+                val myVideoId = call.request.queryParameters["my_video_id"].toString()
                 val myVideoIdInt = myVideoId.toInt()
 
                 val isLaterStr = call.request.queryParameters["is_later"].toString()
@@ -295,7 +327,7 @@ fun Application.routeMyVideo() {
             }
 
             put("/update/download") {
-                val myVideoId = call.request.queryParameters["myvideo_id"].toString()
+                val myVideoId = call.request.queryParameters["my_video_id"].toString()
                 val myVideoIdInt = myVideoId.toInt()
 
                 val isDownloadStr = call.request.queryParameters["is_download"].toString()
@@ -327,7 +359,7 @@ fun Application.routeMyVideo() {
             }
 
             put("/update/dontcare") {
-                val myVideoId = call.request.queryParameters["myvideo_id"].toString()
+                val myVideoId = call.request.queryParameters["my_video_id"].toString()
                 val myVideoIdInt = myVideoId.toInt()
 
                 val isDontCareStr = call.request.queryParameters["is_dont_care"].toString()
@@ -359,7 +391,7 @@ fun Application.routeMyVideo() {
             }
 
             put("/update/viewtime") {
-                val myVideoId = call.request.queryParameters["myvideo_id"].toString()
+                val myVideoId = call.request.queryParameters["my_video_id"].toString()
                 val myVideoIdInt = myVideoId.toInt()
 
                 val viewTimeStr = call.request.queryParameters["viewtime"].toString()
@@ -391,7 +423,7 @@ fun Application.routeMyVideo() {
 
             delete("/delete")
             {
-                val myVideoId = call.request.queryParameters["myvideo_id"].toString()
+                val myVideoId = call.request.queryParameters["my_video_id"].toString()
                 val myVideoIdInt = myVideoId?.toInt() ?: -1
 
                 val noOfRowsAffected = db.delete(EntityMyVideo)

@@ -323,6 +323,110 @@ fun Application.routeVideo() {
 
             }
 
+            put("/update/like/cancel") {
+                val videoId = call.request.queryParameters["video_id"].toString()
+                val videoIdInt = videoId.toInt()
+
+                val video = db.from(EntityVideo)
+                    .select()
+                    .where(EntityVideo.video_id eq videoIdInt)
+                    .map {
+                        Video(
+                            video_id = it[EntityVideo.video_id] ?: 0,
+                            title = it[EntityVideo.title].orEmpty(),
+                            theme_id = it[EntityVideo.theme_id] ?: 0,
+                            creater_image = it[EntityVideo.creater_image].orEmpty(),
+                            creater = it[EntityVideo.creater].orEmpty(),
+                            platform = it[EntityVideo.platform].orEmpty(),
+                            like_count = it[EntityVideo.like_count] ?: 0,
+                            view_count = it[EntityVideo.view_count] ?: 0,
+                            dislike_count = it[EntityVideo.dislike_count] ?: 0,
+                            comment_count = it[EntityVideo.comment_count] ?: 0,
+                            share_count = it[EntityVideo.share_count] ?: 0,
+                            video_url = it[EntityVideo.video_url].orEmpty(),
+                            poster_image = it[EntityVideo.poster_image].orEmpty(),
+                            date_submitted = it[EntityVideo.date_submitted].orEmpty(),
+                        )
+                    }.first()
+
+                val likeCount = video.like_count!! - 1
+
+                val noOfRowsAffected = db.update(EntityVideo)
+                {
+                    set(it.like_count, likeCount)
+                    where {
+                        it.video_id eq videoIdInt
+                    }
+                }
+
+                if (noOfRowsAffected > 0) {
+                    //success
+                    call.respond(
+                        HttpStatusCode.OK,
+                        GenericResponse(isSuccess = true, data = "$noOfRowsAffected rows are affected")
+                    )
+                } else {
+                    //fail
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        GenericResponse(isSuccess = false, data = "Error to update the video")
+                    )
+                }
+
+            }
+
+            put("/update/dislike/cancel") {
+                val videoId = call.request.queryParameters["video_id"].toString()
+                val videoIdInt = videoId.toInt()
+
+                val video = db.from(EntityVideo)
+                    .select()
+                    .where(EntityVideo.video_id eq videoIdInt)
+                    .map {
+                        Video(
+                            video_id = it[EntityVideo.video_id] ?: 0,
+                            title = it[EntityVideo.title].orEmpty(),
+                            theme_id = it[EntityVideo.theme_id] ?: 0,
+                            creater_image = it[EntityVideo.creater_image].orEmpty(),
+                            creater = it[EntityVideo.creater].orEmpty(),
+                            platform = it[EntityVideo.platform].orEmpty(),
+                            like_count = it[EntityVideo.like_count] ?: 0,
+                            view_count = it[EntityVideo.view_count] ?: 0,
+                            dislike_count = it[EntityVideo.dislike_count] ?: 0,
+                            comment_count = it[EntityVideo.comment_count] ?: 0,
+                            share_count = it[EntityVideo.share_count] ?: 0,
+                            video_url = it[EntityVideo.video_url].orEmpty(),
+                            poster_image = it[EntityVideo.poster_image].orEmpty(),
+                            date_submitted = it[EntityVideo.date_submitted].orEmpty(),
+                        )
+                    }.first()
+
+                val dislikeCount = video.dislike_count!! + 1
+
+                val noOfRowsAffected = db.update(EntityVideo)
+                {
+                    set(it.dislike_count, dislikeCount)
+                    where {
+                        it.video_id eq videoIdInt
+                    }
+                }
+
+                if (noOfRowsAffected > 0) {
+                    //success
+                    call.respond(
+                        HttpStatusCode.OK,
+                        GenericResponse(isSuccess = true, data = "$noOfRowsAffected rows are affected")
+                    )
+                } else {
+                    //fail
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        GenericResponse(isSuccess = false, data = "Error to update the video")
+                    )
+                }
+
+            }
+
             put("/update/comment") {
                 val videoId = call.request.queryParameters["video_id"].toString()
                 val videoIdInt = videoId.toInt()
@@ -349,7 +453,7 @@ fun Application.routeVideo() {
                         )
                     }.first()
 
-                val commentCount = video.comment_count!! + 1
+                val commentCount = video.comment_count!! - 1
 
                 val noOfRowsAffected = db.update(EntityVideo)
                 {
