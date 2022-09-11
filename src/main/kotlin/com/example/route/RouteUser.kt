@@ -79,8 +79,7 @@ fun Application.routeUser() {
 
                 if (user != null)
                     call.respond(
-                        HttpStatusCode.OK,
-                        GenericResponse(isSuccess = true, data = user)
+                        user
                     )
                 else
                     call.respond(
@@ -152,11 +151,30 @@ fun Application.routeUser() {
                     }
                 }
 
+                val userInfo = db.from(EntityUser)
+                    .select()
+                    .where {
+                        EntityUser.user_id eq user.user_id
+                    }
+                    .map {
+                        User(
+                            user_id = it[EntityUser.user_id]!!,
+                            user_name = it[EntityUser.user_name],
+                            user_image = it[EntityUser.user_image],
+                            email = it[EntityUser.email],
+                            birthday = it[EntityUser.birthday],
+                            phone_number = it[EntityUser.phone_number],
+                            address = it[EntityUser.address],
+                            last_active = it[EntityUser.last_active],
+                            account_type_id = it[EntityUser.account_type_id]
+                        )
+                    }
+                    .firstOrNull()
+
                 if (noOfRowsAffected > 0) {
                     //success
                     call.respond(
-                        HttpStatusCode.OK,
-                        GenericResponse(isSuccess = true, data = "$noOfRowsAffected rows are affected")
+                        user
                     )
                 } else {
                     //fail
